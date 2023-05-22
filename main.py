@@ -131,7 +131,22 @@ def remove_resources(name_of_drink):
     resource_report()
 
 
-# # main section #
+def check_resource_against_recipie(drink_recipie_to_check):
+    """Returns true or false based on storage levels compared to drink recipie"""
+    for num in range(len(recipie)):
+        if recipie[num]['name'] == drink_recipie_to_check:
+            if storage['water'] < recipie[num]['water']:
+                print('checking water')
+                return False
+            if storage['milk'] < recipie[num]['milk']:
+                return False
+            if storage['coffee'] < recipie[num]['coffee']:
+                return False
+            else:
+                return True
+
+
+# main section #
 customer_money = total_value_of_coins_inserted()
 print(f'You have inserted ${customer_money:.2f}\n')
 
@@ -147,5 +162,11 @@ coffee_choice = input(f"\nWhat coffee would you like?")
 while coffee_choice not in options:
     coffee_choice = input(f"Not an option.\nPick a coffee: ")
 
-give_change(coffee_choice, customer_money)
+if check_resource_against_recipie(coffee_choice):
+    remove_resources(coffee_choice)
+    give_change(coffee_choice, customer_money)
+else:
+    print('Sorry not enough resources to make your drink')
+    print('Here is your money back')
+    coin_combo(customer_money)
 
