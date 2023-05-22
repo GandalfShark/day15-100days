@@ -1,15 +1,16 @@
 """
-coffee machine simulator, day 15 100 days
+coffee machine simulator, day 15, 100 days of python
 
 approach to problem:
 holds values of milk ml, water ml, coffee g  and recipes- DONE
-print report
+print report -DONE
+check the resources against recipe -DONE
+todo give back money if not enough resources
+process coins and calculate value - DONE
+and give change - # of coins -DONE
 todo - check the resources against recipe
-todo - give back money if not enough resources
-process coins and calculate value
-todo and give change - # of coins
-todo - check the resources against recipe
-todo - subtract the recipie values from the storage values
+subtract the recipie values from the storage values - DONE
+
 """
 from time import sleep
 print('''
@@ -118,7 +119,19 @@ def coin_combo(change_to_be_given):
     print(f'You get: {nickles_out} Nickles back.')
 
 
-# main section #
+def remove_resources(name_of_drink):
+    print('\n Starting:')
+    resource_report()
+    for num in range(len(recipie)):
+        if recipie[num]['name'] == name_of_drink:
+            storage['water'] -= recipie[num]['water']
+            storage['milk'] -= recipie[num]['milk']
+            storage['coffee'] -= recipie[num]['coffee']
+    print('COMPLETE:')
+    resource_report()
+
+
+# # main section #
 customer_money = total_value_of_coins_inserted()
 print(f'You have inserted ${customer_money:.2f}\n')
 
@@ -129,9 +142,10 @@ for n in range(len(recipie)):
 print('\nYou have enough money for:')
 options = can_buy(customer_money)
 print(options)
-
+# TODO check the resources to be sure the drink can be made
 coffee_choice = input(f"\nWhat coffee would you like?")
 while coffee_choice not in options:
     coffee_choice = input(f"Not an option.\nPick a coffee: ")
 
 give_change(coffee_choice, customer_money)
+
