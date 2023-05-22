@@ -5,17 +5,17 @@ approach to problem:
 holds values of milk ml, water ml, coffee g  and recipes- DONE
 print report -DONE
 check the resources against recipe -DONE
-todo give back money if not enough resources
+give back money if not enough resources -DONE
 process coins and calculate value - DONE
 and give change - # of coins -DONE
-todo - check the resources against recipe
+check the resources against recipe -DONE
 subtract the recipie values from the storage values - DONE
 
 """
 from time import sleep
 print('''
 ___________________________________
-Wellcome to the fake coffe machine!
+Welcome to the fake coffee machine!
                                                             
        ██    ██    ██                                    
      ██       ██  ██                                      
@@ -39,8 +39,8 @@ recipie = [{'name': 'espresso', 'water': 50, 'milk': 0, 'coffee': 18, 'price': 1
            {'name': 'cappuccino', 'water': 50, 'milk': 0, 'coffee': 18, 'price': 1.85}]
 
 storage = {'water': 300, 'milk': 200, 'coffee': 100}
-options =[]
-# blank list used to create a list of options from recipie
+options = []
+# blank list used to create a list of options from recipe
 coin_values = {'quarters': 0.25, 'dimes': 0.10, 'nickels': 0.05 }
 
 def resource_report():
@@ -157,11 +157,12 @@ for n in range(len(recipie)):
 print('\nYou have enough money for:')
 options = can_buy(customer_money)
 print(options)
-# TODO check the resources to be sure the drink can be made
+
 coffee_choice = input(f"\nWhat coffee would you like?")
 while coffee_choice not in options:
     coffee_choice = input(f"Not an option.\nPick a coffee: ")
 
+# make sure coffee can be made if not return money
 if check_resource_against_recipie(coffee_choice):
     remove_resources(coffee_choice)
     give_change(coffee_choice, customer_money)
