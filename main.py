@@ -10,7 +10,7 @@ process coins and calculate value - DONE
 and give change - # of coins -DONE
 check the resources against recipe -DONE
 subtract the recipie values from the storage values - DONE
-
+TODO - fix bugs: not enough money still lets you "buy" a coffee
 """
 from time import sleep
 print('''
@@ -42,12 +42,15 @@ storage = {'water': 300, 'milk': 200, 'coffee': 100}
 options = []
 # blank list used to create a list of options from recipe
 coin_values = {'quarters': 0.25, 'dimes': 0.10, 'nickels': 0.05 }
+bank = 0
 
 def resource_report():
     """prints the total resources in machine """
     print(f"There is {storage['water']}ml of water.")
     print(f"There is {storage['milk']}ml of milk.")
     print(f"There is {storage['coffee']}g of coffee.")
+    print('---------------------------------------')
+    print(f'The machine has made: ${bank:.2f} so far.')
 
 
 def how_much_is_coin_worth(coin_name = 'nickels', coin_number=2):
@@ -68,7 +71,7 @@ def total_value_of_coins_inserted():
 
 def can_buy(money):
     """checks money to see what customer can buy """
-    afordable_drinks =[]
+    afordable_drinks = []
     for index in range(len(recipie)):
         if recipie[index]['price'] <= money:
             afordable_drinks.append(f"{recipie[index]['name']}")
@@ -76,10 +79,12 @@ def can_buy(money):
 
 
 def give_change(drink_name, money_in):
+    global bank
     """ checks drink names and subtracts price from money in"""
     for num in range(len(recipie)):
         if recipie[num]['name'] == drink_name:
             money_out = money_in - recipie[num]['price']
+            bank += recipie[num]['price']
             print(f'Buying a {drink_name} gives you ${money_out:.2f} back.')
     coin_combo(money_out)
     print('coins returned\nENJOY YOUR PRETEND COFFEE!')
@@ -121,14 +126,14 @@ def coin_combo(change_to_be_given):
 
 def remove_resources(name_of_drink):
     print('\n Starting:')
-    resource_report()
+    # resource_report()
     for num in range(len(recipie)):
         if recipie[num]['name'] == name_of_drink:
             storage['water'] -= recipie[num]['water']
             storage['milk'] -= recipie[num]['milk']
             storage['coffee'] -= recipie[num]['coffee']
     print('COMPLETE:')
-    resource_report()
+    # resource_report()
 
 
 def check_resource_against_recipie(drink_recipie_to_check):
@@ -145,29 +150,48 @@ def check_resource_against_recipie(drink_recipie_to_check):
             else:
                 return True
 
+while True:
+    # main section #
+    customer_money = total_value_of_coins_inserted()
+    print(f'You have inserted ${customer_money:.2f}\n')
 
-# main section #
-customer_money = total_value_of_coins_inserted()
-print(f'You have inserted ${customer_money:.2f}\n')
+    for n in range(len(recipie)):
+        print(recipie[n]['name'], end=' ')
+        print('$', recipie[n]['price'], end=' ')
 
-for n in range(len(recipie)):
-    print(recipie[n]['name'], end=' ')
-    print('$', recipie[n]['price'], end=' ')
+    print('\nYou have enough money for:')
+    options = can_buy(customer_money)
+    print(options)
+    options.append('report')
 
-print('\nYou have enough money for:')
-options = can_buy(customer_money)
-print(options)
+    coffee_choice = input(f"\nWhat coffee would you like?")
+    if coffee_choice == 'report':
+        resource_report()
+        # options.remove('report')
+        # clears the entire list for some reason
 
-coffee_choice = input(f"\nWhat coffee would you like?")
-while coffee_choice not in options:
-    coffee_choice = input(f"Not an option.\nPick a coffee: ")
+    while coffee_choice not in options:
+        print(f'Your options are: {options}')
+        coffee_choice = input(f"\nPick a coffee: ")
 
-# make sure coffee can be made if not return money
-if check_resource_against_recipie(coffee_choice):
-    remove_resources(coffee_choice)
-    give_change(coffee_choice, customer_money)
-else:
-    print('Sorry not enough resources to make your drink')
-    print('Here is your money back')
-    coin_combo(customer_money)
+    # make sure coffee can be made if not return money
+    if check_resource_against_recipie(coffee_choice):
+        remove_resources(coffee_choice)
+        print('')
+        give_change(coffee_choice, customer_money)
+    else:
+        print('\nSorry not enough resources to make your drink')
+        print('Here is your money back')
+        coin_combo(customer_money)
 
+    more = input('more coffee?').lower().strip()
+    if more == 'yes':
+        continue
+    if more == 'no':
+        print('fine be that way')
+        break
+    else:
+        print('INVALID INPUT!!!\n I will explode now. ')
+        break
+
+print('\n\n That\'s All Folks!')
